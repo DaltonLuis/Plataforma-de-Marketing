@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProcuraAqui - Tutorial da API</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --success-color: #4CAF50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .hero-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero-section .logo {
+            font-size: 80px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .quick-link-btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-decoration: none;
+        }
+
+        .btn-swagger {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-docs {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-github {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .tutorial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #f8f8f2;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .endpoint-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+
+        .badge-get { background: #61affe; color: white; }
+        .badge-post { background: #49cc90; color: white; }
+        .badge-put { background: #fca130; color: white; }
+        .badge-delete { background: #f93e3e; color: white; }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .credentials-table {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .credentials-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px;
+        }
+
+        .credentials-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .api-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            min-width: 150px;
+            margin: 10px;
+        }
+
+        .flow-arrow {
+            font-size: 30px;
+            color: var(--primary-color);
+        }
+
+        .accordion-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .accordion-button:hover {
+            background: #45a049;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        footer {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="logo">
+                <i class="fas fa-search-location"></i>
+            </div>
+            <h1>🚀 ProcuraAqui API</h1>
+            <p class="lead">Plataforma de Marketing para Empreendedores</p>
+            <p>Bem-vindo ao tutorial interativo da API ProcuraAqui. Aprenda a fazer consultas e integrar com a nossa plataforma!</p>
+            
+            <div class="quick-links">
+                <a href="/docs" class="quick-link-btn btn-swagger" target="_blank">
+                    <i class="fas fa-book"></i> Swagger UI
+                </a>
+                <a href="/redoc" class="quick-link-btn btn-docs" target="_blank">
+                    <i class="fas fa-file-alt"></i> ReDoc
+                </a>
+                <a href="/chat" class="quick-link-btn btn-github">
+                    <i class="fas fa-comments"></i> WebSocket Chat
+                </a>
+                <a href="/health" class="quick-link-btn btn-github" target="_blank">
+                    <i class="fas fa-heartbeat"></i> Health Check
+                </a>
+            </div>
+        </div>
+
+        <!-- Tutorial Steps -->
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                <span>Aceder ao Swagger UI</span>
+            </div>
+            
+            <p>O Swagger UI é uma interface interativa para testar a API. Clique no botão abaixo ou aceda diretamente:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                <pre>http://localhost:5000/docs</pre>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fas fa-info-circle"></i> Dica:</strong> O Swagger UI permite testar todos os endpoints sem precisar de ferramentas externas como Postman!
+            </div>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                <span>Credenciais de Teste</span>
+            </div>
+            
+            <p>Use estas credenciais para testar a autenticação:</p>
+            
+            <table class="credentials-table table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Email</th>
+                        <th>Senha</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-danger">Admin</span></td>
+                        <td>adminaewon@gmail.com</td>
+                        <td>admin</td>
+                        <td>Acesso total ao sistema</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-danger">Admin</span></td>
+                        <td>admindalton@gmail.com</td>
+                        <td>admin</td>
+                        <td>Acesso total ao sistema</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">Vendedor</span></td>
+                        <td>vendedor@gmail.com</td>
+                        <td>vendedor</td>
+                        <td>Pode criar e gerir produtos</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-info">Cliente</span></td>
+                        <td>cliente@gmail.com</td>
+                        <td>cliente</td>
+                        <td>Pode fazer compras e reviews</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">3</span>
+                <span>Fluxo de Autenticação</span>
+            </div>
+            
+            <div class="api-flow">
+                <div class="flow-step">
+                    <i class="fas fa-sign-in-alt fa-3x" style="color: var(--primary-color);"></i>
+                    <h5>Login</h5>
+                    <p>POST /login</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <i class="fas fa-key fa-3x" style="color: var(--warning-color);"></i>
+                    <h5>Token JWT</h5>
+                    <p>Receber token</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <i class="fas fa-lock-open fa-3x" style="color: var(--success-color);"></i>
+                    <h5>Autorizar</h5>
+                    <p>Usar token</p>
+                </div>
+            </div>
+
+            <h5>Passo a Passo no Swagger:</h5>
+            
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-chevron-down"></i> 3.1 - Fazer Login
+            </button>
+            <div class="accordion-content">
+                <ol>
+                    <li>No Swagger UI, procure o endpoint <span class="endpoint-badge badge-post">POST</span> <code>/login</code></li>
+                    <li>Clique em <strong>"Try it out"</strong></li>
+                    <li>Preencha o JSON com as credenciais:</li>
+                </ol>
+                
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre>{
+  "userEmail": "admindalton@gmail.com",
+  "password": "admin"
+}</pre>
+                </div>
+                
+                <ol start="4">
+                    <li>Clique em <strong>"Execute"</strong></li>
+                    <li>Na resposta, copie o valor do campo <code>access_token</code></li>
+                </ol>
+
+                <div class="success-box">
+                    <strong><i class="fas fa-check-circle"></i> Resposta esperada:</strong>
+                    <div class="code-block">
+                        <pre>{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-chevron-down"></i> 3.2 - Autorizar no Swagger
+            </button>
+            <div class="accordion-content">
+                <ol>
+                    <li>No topo da página do Swagger, clique no botão <strong>"Authorize"</strong> 🔒</li>
+                    <li>Cole o token no campo <code>Bearer</code></li>
+                    <li>Clique em <strong>"Authorize"</strong></li>
+                    <li>Clique em <strong>"Close"</strong></li>
+                </ol>
+
+                <div class="info-box">
+                    <strong><i class="fas fa-lightbulb"></i> Nota:</strong> Agora todos os endpoints protegidos podem ser testados!
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">4</span>
+                <span>Endpoints Principais</span>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-users"></i> Gestão de Usuários
+            </button>
+            <div class="accordion-content">
+                <h6><span class="endpoint-badge badge-get">GET</span> /users - Listar todos os usuários</h6>
+                <p>Retorna lista de todos os usuários cadastrados.</p>
+
+                <h6><span class="endpoint-badge badge-get">GET</span> /users/{id} - Buscar usuário por ID</h6>
+                <p>Retorna detalhes de um usuário específico.</p>
+
+                <h6><span class="endpoint-badge badge-post">POST</span> /users - Criar novo usuário</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre>{
+  "userFirstName": "João",
+  "userLastName": "Silva",
+  "userEmail": "joao@example.com",
+  "password": "senha123",
+  "userType": "cliente",
+  "userPhoneNumber": "+239 999 9999"
+}</pre>
+                </div>
+
+                <h6><span class="endpoint-badge badge-put">PUT</span> /users/{id} - Atualizar usuário</h6>
+                <h6><span class="endpoint-badge badge-delete">DELETE</span> /users/{id} - Deletar usuário</h6>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-box"></i> Gestão de Produtos
+            </button>
+            <div class="accordion-content">
+                <h6><span class="endpoint-badge badge-get">GET</span> /products - Listar produtos</h6>
+                <h6><span class="endpoint-badge badge-post">POST</span> /products - Criar produto</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre>{
+  "productName": "Serviço de Pintura",
+  "productDescription": "Pintura residencial e comercial",
+  "unitPrice": 5000.00,
+  "unitInStock": 10,
+  "categoryId": 1
+}</pre>
+                </div>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-tags"></i> Categorias
+            </button>
+            <div class="accordion-content">
+                <h6><span class="endpoint-badge badge-get">GET</span> /categories - Listar categorias</h6>
+                <p>Categorias disponíveis: Pintura, Encanamento, Limpeza, Jardinagem, Elétrica, Construção Civil, Mudança, Reparo de Automóveis, Instalação de Ar Condicionado</p>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-star"></i> Reviews e Avaliações
+            </button>
+            <div class="accordion-content">
+                <h6><span class="endpoint-badge badge-post">POST</span> /product-reviews - Avaliar produto</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre>{
+  "productId": 1,
+  "customerId": 5,
+  "rating": 5,
+  "customerReview": "Excelente serviço!"
+}</pre>
+                </div>
+
+                <h6><span class="endpoint-badge badge-post">POST</span> /seller-reviews - Avaliar vendedor</h6>
+            </div>
+
+            <button class="accordion-button" onclick="toggleAccordion(this)">
+                <i class="fas fa-envelope"></i> Email
+            </button>
+            <div class="accordion-content">
+                <h6><span class="endpoint-badge badge-post">POST</span> /send-email - Enviar email</h6>
+                <h6><span class="endpoint-badge badge-post">POST</span> /send-verification-code - Código de verificação</h6>
+                <h6><span class="endpoint-badge badge-post">POST</span> /verify-code - Verificar código</h6>
+            </div>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">5</span>
+                <span>Testar com cURL</span>
+            </div>
+
+            <p>Também pode testar a API usando cURL no terminal:</p>
+
+            <h6>Login:</h6>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                <pre>curl -X POST "http://localhost:5000/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userEmail": "admindalton@gmail.com",
+    "password": "admin"
+  }'</pre>
+            </div>
+
+            <h6>Listar usuários (com token):</h6>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                <pre>curl -X GET "http://localhost:5000/users" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"</pre>
+            </div>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">6</span>
+                <span>Códigos de Resposta HTTP</span>
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Significado</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-success">
+                        <td><strong>200</strong></td>
+                        <td>OK</td>
+                        <td>Requisição bem-sucedida</td>
+                    </tr>
+                    <tr class="table-success">
+                        <td><strong>201</strong></td>
+                        <td>Created</td>
+                        <td>Recurso criado com sucesso</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><strong>400</strong></td>
+                        <td>Bad Request</td>
+                        <td>Dados inválidos na requisição</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><strong>401</strong></td>
+                        <td>Unauthorized</td>
+                        <td>Token inválido ou ausente</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><strong>404</strong></td>
+                        <td>Not Found</td>
+                        <td>Recurso não encontrado</td>
+                    </tr>
+                    <tr class="table-danger">
+                        <td><strong>500</strong></td>
+                        <td>Internal Server Error</td>
+                        <td>Erro no servidor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tutorial-card">
+            <div class="step-title">
+                <span class="step-number">7</span>
+                <span>Recursos Adicionais</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="text-center p-3">
+                        <i class="fas fa-book fa-3x mb-3" style="color: var(--primary-color);"></i>
+                        <h5>Documentação</h5>
+                        <p>Consulte a documentação completa no README.md</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3">
+                        <i class="fas fa-database fa-3x mb-3" style="color: var(--secondary-color);"></i>
+                        <h5>Migrações</h5>
+                        <p>Veja MIGRATIONS_GUIDE.md para gerenciar o banco de dados</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3">
+                        <i class="fas fa-code fa-3x mb-3" style="color: var(--warning-color);"></i>
+                        <h5>Exemplos</h5>
+                        <p>Teste todos os endpoints no Swagger UI</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <h4>🎉 Pronto para começar?</h4>
+            <p>Aceda ao Swagger UI e comece a explorar a API!</p>
+            <a href="/docs" class="btn btn-lg btn-success mt-3" target="_blank">
+                <i class="fas fa-rocket"></i> Abrir Swagger UI
+            </a>
+            <hr class="my-4">
+            <p class="text-muted">
+                <i class="fas fa-envelope"></i> Contato: luisinho2dbl@gmail.com<br>
+                <i class="fas fa-code"></i> Desenvolvido por Dalton Luís
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copiado!';
+                button.style.background = '#4CAF50';
+
+                setTimeout(() => {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#4CAF50';
+                }, 2000);
+            });
+        }
+
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('active');
+            
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Auto-scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

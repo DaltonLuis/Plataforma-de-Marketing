@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ProcuraAqui Chat</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .chat-header .client-id {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .messages-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .message {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .message.own {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: 50px;
+        }
+        .message.other {
+            background: #e3f2fd;
+            margin-right: 50px;
+        }
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+        .chat-input form {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+        .chat-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .chat-input button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .chat-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .back-link {
+            text-align: center;
+            padding: 15px;
+            background: white;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .status.disconnected {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1><i class="fas fa-comments"></i> ProcuraAqui Chat</h1>
+            <div class="client-id">Seu ID: <span id="ws-id"></span></div>
+        </div>
+        <div class="status" id="status">
+            <i class="fas fa-circle"></i> Conectado
+        </div>
+        <div class="messages-container" id="messages-container">
+            <ul id="messages" class="list-unstyled"></ul>
+        </div>
+        <div class="chat-input">
+            <form id="messageForm" onsubmit="sendMessage(event)">
+                <input type="text" id="messageText" autocomplete="off" placeholder="Digite sua mensagem..."/>
+                <button type="submit">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </form>
+        </div>
+        <div class="back-link">
+            <a href="/"><i class="fas fa-arrow-left"></i> Voltar ao Tutorial</a> | 
+            <a href="/docs" target="_blank"><i class="fas fa-book"></i> Swagger UI</a>
+        </div>
+    </div>
+
+    <script>
+        var client_id = Date.now();
+        document.querySelector("#ws-id").textContent = client_id;
+        
+        var ws = new WebSocket(`ws://localhost:5000/ws/${client_id}`);
+        var messagesContainer = document.getElementById('messages-container');
+        var statusDiv = document.getElementById('status');
+        
+        ws.onopen = function() {
+            statusDiv.innerHTML = '<i class="fas fa-circle"></i> Conectado';
+            statusDiv.className = 'status';
+        };
+        
+        ws.onclose = function() {
+            statusDiv.innerHTML = '<i class="fas fa-circle"></i> Desconectado';
+            statusDiv.className = 'status disconnected';
+        };
+        
+        ws.onmessage = function(event) {
+            var messages = document.getElementById('messages');
+            var message = document.createElement('li');
+            message.className = 'message';
+            
+            if (event.data.startsWith('You wrote:')) {
+                message.className = 'message own';
+            } else {
+                message.className = 'message other';
+            }
+            
+            message.textContent = event.data;
+            messages.appendChild(message);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+        
+        function sendMessage(event) {
+            event.preventDefault();
+            var input = document.getElementById("messageText");
+            
+            if (input.value.trim() !== '') {
+                ws.send(input.value);
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
