@@ -1,61 +1,81 @@
-# 👋 Hey, I'm Dalton Luís
+# ProcuraAqui API
 
-I’m a software builder passionate about **developer experience**, **scalable systems**, and **automation that empowers creativity**.  
-I believe in clarity, small iterations, and measurable impact.
+API para plataforma de marketing de empreendedores.
 
----
+## Instalação
 
-## 🚀 About Me
-- 🔭 **Currently building:** full-stack applications with React, Node.js, and Go  
-- 🌱 **Learning:** Kubernetes, observability, and cloud-native design  
-- 👯 **Open to:** open-source collaboration and developer tooling projects  
-- 💬 **Topics I enjoy:** performance, automation, system design, CI/CD  
-- 📫 **Connect:** [LinkedIn](https://www.linkedin.com/in/dalton-bandeira-lu%C3%ADs) · [Email](mailto:luisinho2dbl@gmail.com)  
-- ⚡ **Fun fact:** I love creating small tools that eliminate repetitive tasks
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+# Editar .env com suas credenciais
+uvicorn main:app --reload --port 5000
+```
 
----
+## ⚠️ Configuração do Banco de Dados
 
-## 🛠️ Tech Stack
-**Languages:** JavaScript · TypeScript · Python · Go  
-**Frameworks & Tools:** React · Next.js · Node.js · Docker  
-**Cloud & Data:** AWS · GCP · PostgreSQL · Redis  
-**Practices:** TDD · CI/CD · Documentation-as-Code
+### Opção 1: Docker (Recomendado)
 
----
+```bash
+# Iniciar PostgreSQL com Docker
+docker-compose up -d
 
-## 🌟 Featured Projects
-- **Real-Time Analytics Dashboard** — Live data insights with React + PostgreSQL  
-  Stack: React · Node.js · PostgreSQL
+# Verificar se está rodando
+docker ps
+```
 
-- **Serverless APIs at Scale** — Event-driven architecture for large-scale data  
-  Stack: TypeScript · AWS Lambda · DynamoDB
+### Opção 2: PostgreSQL Local
 
-*(Replace with actual repositories and links.)*
+Se você já tem PostgreSQL instalado localmente, configure o `.env`:
 
----
+```env
+DATABASE_URL=postgresql://seu_usuario:sua_senha@localhost:5432/nome_do_banco
+```
 
-## 📈 Recent Activity
+**Nota:** A porta padrão do PostgreSQL é **5432**, não 5433.
 
-| 🕒 Date | 🧩 Repository | 📝 Commit Message |
-|:--------|:--------------|:-----------------|
+### Criar o Banco de Dados
 
-| 🕒 Date | 🧩 Repository | 📝 Commit Message |
-|:--------|:--------------|:-----------------|
-| _Updating..._ |  |  |
+```bash
+# Se usar PostgreSQL local
+createdb monografia
 
-> _This section is automatically updated every day by a GitHub Action._
+# Ou via psql
+psql -U postgres
+CREATE DATABASE monografia;
+\q
+```
 
----
+## Configuração (.env)
 
-## 📊 GitHub Insights
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=DaltonLuis&show_icons=true&theme=github_dark" alt="Stats" height="150" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DaltonLuis&layout=compact&theme=github_dark" alt="Top Languages" height="150" />
-  <img src="https://streak-stats.demolab.com?user=DaltonLuis&theme=github-dark-blue" alt="Streak Stats" height="150" />
-</p>
+```env
+DATABASE_URL=postgresql://dalton:teste@localhost:5433/monografia
+JWT_SECRET_KEY=your_secret_key
+EMAIL_ADDRESS=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+```
 
----
+## Migrações
 
-## 🤝 Let’s Collaborate
-Open to **interesting projects**, **open-source contributions**, and **consulting opportunities**.  
-If this resonates, let’s connect and build something impactful together.
+```bash
+alembic upgrade head
+```
+
+## Acesso
+
+- **Tutorial:** http://localhost:5000/
+- **API Docs:** http://localhost:5000/docs
+
+## Credenciais de Teste
+
+- **Admin:** admindalton@gmail.com / admin
+- **Vendedor:** vendedor@gmail.com / vendedor
+- **Cliente:** cliente@gmail.com / cliente
+
+## Troubleshooting
+
+### Erro: "Connection refused" na porta 5433
+
+**Solução:**
+1. Verifique se o PostgreSQL está rodando: `docker ps` ou `pg_isready`
+2. Inicie o Docker: `docker-compose up -d`
+3. Ou ajuste a porta no `.env` para 5432 (porta padrão)
