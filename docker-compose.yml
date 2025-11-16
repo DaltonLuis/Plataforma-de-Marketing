@@ -1,6 +1,29 @@
 version: '3.8'
 
 services:
+  api:
+    build: .
+    container_name: procuraaqui_api
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      REFRESH_TOKEN_EXPIRE_MINUTES: ${REFRESH_TOKEN_EXPIRE_MINUTES}
+      EMAIL_ADDRESS: ${EMAIL_ADDRESS}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_PORT: ${SMTP_PORT}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    depends_on:
+      - postgres
+    networks:
+      - procuraaqui_network
+
   postgres:
     image: postgres:15.2
     container_name: procuraaqui_db
@@ -24,7 +47,6 @@ services:
 
 volumes:
   postgres_data:
-    driver: local
 
 networks:
   procuraaqui_network:
