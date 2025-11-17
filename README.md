@@ -1,51 +1,51 @@
 # ProcuraAqui API
 
-API para plataforma de marketing de empreendedores.
+API for entrepreneurs marketing plataform.
 
-## Instalação
+## Instalation
 
 ```bash
 pip install -r requirements.txt
 cp .env.example .env
-# Editar .env com suas credenciais
+# Edit .env with your credentials
 uvicorn main:app --reload --port 5000
 ```
 
-## ⚠️ Configuração do Banco de Dados
+## ⚠️ Database Configuration
 
-### Opção 1: Docker (Recomendado)
+### Option 1: Docker (Recomended)
 
 ```bash
-# Iniciar PostgreSQL com Docker
+# Start PostgreSQL with Docker
 docker-compose up -d
 
-# Verificar se está rodando
+# Verify if it's running
 docker ps
 ```
 
-### Opção 2: PostgreSQL Local
+### Option 2: Local PostgreSQL
 
-Se você já tem PostgreSQL instalado localmente, configure o `.env`:
+If you alread have PostgreSQL installed localy, configure the `.env`:
 
 ```env
-DATABASE_URL=postgresql://seu_usuario:sua_senha@localhost:5432/nome_do_banco
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db_name
 ```
 
-**Nota:** A porta padrão do PostgreSQL é **5432**, não 5433.
+**Note:** The default port of PostgreSQL is **5432**, not 5433.
 
-### Criar o Banco de Dados
+### Create Database
 
 ```bash
-# Se usar PostgreSQL local
-createdb monografia
+# If local PostgreSQL
+createdb your_db_name
 
-# Ou via psql
+# Or through psql
 psql -U postgres
-CREATE DATABASE monografia;
+CREATE DATABASE your_db_name;
 \q
 ```
 
-## Configuração (.env)
+## Configuration (.env)
 
 ```env
 DATABASE_URL=your_db_url
@@ -54,18 +54,18 @@ EMAIL_ADDRESS=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 ```
 
-## Migrações
+## Migration
 
 ```bash
 alembic upgrade head
 ```
 
-## Acesso
+## Access
 
 - **Tutorial:** http://localhost:5000/
 - **API Docs:** http://localhost:5000/docs
 
-## Credenciais de Teste
+## Test Credentials
 
 - **Admin:** admindalton@gmail.com / admin
 - **Vendedor:** vendedor@gmail.com / vendedor
@@ -75,7 +75,7 @@ alembic upgrade head
 
 ### Erro: "Connection refused" na porta 5433
 
-**Solução:**
-1. Verifique se o PostgreSQL está rodando: `docker ps` ou `pg_isready`
-2. Inicie o Docker: `docker-compose up -d`
-3. Ou ajuste a porta no `.env` para 5432 (porta padrão)
+**Solution:**
+1. Verify if PostgreSQL is running: `docker ps` or `pg_isready`
+2. Run Docker: `docker-compose up -d`
+3. Or change `.env` port to 5432 (default port)
