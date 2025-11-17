@@ -48,7 +48,7 @@ CREATE DATABASE monografia;
 ## Configuração (.env)
 
 ```env
-DATABASE_URL=postgresql://dalton:teste@localhost:5433/monografia
+DATABASE_URL=your_db_url
 JWT_SECRET_KEY=your_secret_key
 EMAIL_ADDRESS=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
